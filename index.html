@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEWARE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Roboto+Mono:wght@700&display=swap');
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a0a2e 0%, #000000 100%);
+            color: white; font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Star Background */
+        #starField {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* First Page / Warning Gate */
+        #warningGate {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .warn-box { 
+            border: 4px solid #ff0000; 
+            padding: 50px; 
+            border-radius: 20px; 
+            background: rgba(255, 0, 0, 0.1); 
+            max-width: 80%;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+        .warn-box h1 {
+            font-family: 'Roboto Mono', monospace;
+            color: #ff0000;
+            font-size: clamp(1.5rem, 6vw, 3rem);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .warn-box p {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: #fff;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .enter-btn {
+            padding: 15px 45px; background: #ff4d4d; border: none;
+            color: white; border-radius: 50px; cursor: pointer; 
+            font-weight: bold; font-size: 1.2rem; transition: transform 0.2s;
+        }
+        .enter-btn:hover { transform: scale(1.1); background: #ff0000; }
+
+        /* Main Content */
+        #content {
+            display: none; flex-direction: column; align-items: center;
+            height: 100vh; width: 100%; position: relative;
+        }
+
+        .moon {
+            position: absolute; top: 40px; right: 10%;
+            width: 80px; height: 80px;
+            background: radial-gradient(circle, #fff 0%, #fefefe 70%, #ccc 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px 20px rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .personal-message {
+            margin-top: 40px; text-align: center; z-index: 20; padding: 0 20px;
+        }
+        .personal-message h1 {
+            font-family: 'Dancing Script', cursive; font-size: clamp(2.5rem, 5vw, 3.5rem);
+            color: #ffb3d9; margin: 0; text-shadow: 0 0 20px rgba(255, 179, 217, 0.8);
+        }
+        .personal-message p { font-size: 0.95rem; line-height: 1.6; max-width: 600px; margin: 15px auto; opacity: 0.85; }
+
+        #proposal-text {
+            opacity: 0; margin-top: 15px;
+            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #ff6b81; text-shadow: 0 0 15px rgba(255, 107, 129, 0.6);
+            transition: opacity 3s ease-in; z-index: 25;
+        }
+
+        #treeCanvas {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 100%; z-index: 5;
+            pointer-events: none;
+        }
+
+        .timer-section {
+            position: absolute; bottom: 40px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            padding: 15px 40px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20; text-align: center;
+        }
+        .timer-text { font-size: 0.9rem; letter-spacing: 0.5px; }
+        .timer-text span { color: #ff6b81; font-weight: 600; }
+
+        /* Music Toggle Button */
+        #muteBtn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 100;
+            background: rgba(255, 179, 217, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; border-radius: 50%; width: 45px; height: 45px;
+            cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #muteBtn:hover { background: rgba(255, 179, 217, 0.4); transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="/Users/priyamvadhavangala/Desktop/untitled folder/your-song-file.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="warningGate">
+        <div class="warn-box">
+            <h1>DO NOT CLICK LINKS!! BEWARE!!</h1>
+            <p>SCAMMERS ARE EVERYWHERE!!</p>
+            <button class="enter-btn" onclick="initPage()">I UNDERSTAND, CONTINUE</button>
+        </div>
+    </div>
+
+    <div id="content">
+        <div id="starField"></div>
+        <div class="moon"></div>
+        
+        <button id="muteBtn" onclick="toggleMute()">🔊</button>
+
+        <div class="personal-message">
+            <h1>Happy Birthday Anniii &lt;3</h1>
+            <p>I wish you all the happiness, success, love and peace. You deserve all the happiness. Just turn back at any point of time in your life and you will see me behind your back, no matter what.</p>
+            <div id="proposal-text">In a world where everything changes, you’ve been my constant since we were kids. I loved you then, I love you now, and I’ll love you forever<3.</div>
+        </div>
+
+        <canvas id="treeCanvas"></canvas>
+
+        <div class="timer-section">
+            <div class="timer-text" id="luckierTimer">Preparing surprise...</div>
+        </div>
+    </div>
+
+    <script>
+        const dob = new Date("1999-02-17T00:00:00");
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        const music = document.getElementById('bgMusic');
+
+        function initPage() {
+            // Start Music
+            music.play().catch(e => console.log("Audio failed to play:", e));
+
+            document.getElementById('warningGate').style.display = 'none';
+            document.getElementById('content').style.display = 'flex';
+            
+            createStars();
+            resizeCanvas();
+            drawTree(canvas.width / 2, canvas.height - 80, 110, -90, 18);
+            
+            setInterval(updateTimer, 1000);
+            updateTimer();
+            setTimeout(() => { document.getElementById('proposal-text').style.opacity = '1'; }, 2000);
+        }
+
+        function toggleMute() {
+            const btn = document.getElementById('muteBtn');
+            if (music.muted) {
+                music.muted = false;
+                btn.innerHTML = "🔊";
+            } else {
+                music.muted = true;
+                btn.innerHTML = "🔇";
+            }
+        }
+
+        function createStars() {
+            const starField = document.getElementById('starField');
+            const starCount = 150;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 'px';
+                star.style.width = size;
+                star.style.height = size;
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                starField.appendChild(star);
+            }
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function drawTree(x1, y1, length, angle, thickness) {
+            const x2 = x1 + Math.cos(angle * Math.PI / 180) * length;
+            const y2 = y1 + Math.sin(angle * Math.PI / 180) * length;
+
+            let trunkGrad = ctx.createLinearGradient(x1, y1, x2, y2);
+            trunkGrad.addColorStop(0, '#1a0d00');
+            trunkGrad.addColorStop(0.5, '#4a321f');
+            trunkGrad.addColorStop(1, '#1a0d00');
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = trunkGrad;
+            ctx.lineWidth = thickness;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            if (length < 12) {
+                drawHeartCanopy(x2, y2);
+                return;
+            }
+
+            drawTree(x2, y2, length * 0.78, angle - (Math.random() * 20 + 10), thickness * 0.7);
+            drawTree(x2, y2, length * 0.78, angle + (Math.random() * 20 + 10), thickness * 0.7);
+        }
+
+        function drawHeartCanopy(x, y) {
+            const colors = [
+                {c: '#ff85a2', g: '#ffb3d9'}, // Pink
+                {c: '#1a1a1a', g: '#4d4d4d'}, // Black
+                {c: '#3498db', g: '#85c1e9'}, // Blue
+                {c: '#e74c3c', g: '#ff7675'}, // Red
+                {c: '#2ecc71', g: '#a2f0c1'}, // Green
+                {c: '#ffffff', g: '#fdfefe'}, // White
+                {c: '#f1c40f', g: '#f9e79f'}  // Yellow
+            ];
+
+            for(let i = 0; i < 12; i++) {
+                ctx.save();
+                const heart = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.random() * 8 + 12;
+                
+                ctx.translate(x + (Math.random() - 0.5) * 65, y + (Math.random() - 0.5) * 65);
+                ctx.fillStyle = heart.c;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = heart.g;
+                
+                ctx.beginPath();
+                const d = size;
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-d / 2, -d / 2, -d, d / 3, 0, d);
+                ctx.bezierCurveTo(d, d / 3, d / 2, -d / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - dob;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            document.getElementById("luckierTimer").innerHTML = 
+                `The world got luckier since <span>${days}</span> Days <span>${hours}</span> Hours <span>${minutes}</span> Minutes <span>${seconds}</span> Seconds`;
+        }
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('content').style.display === 'flex') {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                resizeCanvas();
+                drawTree(canvas.width / 2, canvas.height - 80, 110, -90, 18);
+            }
+        });
+    </script>
+</body>
+</html>
